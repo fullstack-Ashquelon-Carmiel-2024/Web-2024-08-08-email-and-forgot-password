@@ -1,5 +1,37 @@
+import {useState} from 'react';
+import {useNavigate} from 'react-router-dom';
+import { forgotPassword } from '../services/auth';
+
 
 const ForgotPassword = () => {
+
+  const navigate = useNavigate();
+
+  const [email,setEmail] = useState('');
+  const [errMsg,setErrMsg] = useState('');
+
+  const onSubmit = async (e) => {
+
+    e.preventDefault();
+
+    // tbd email validation
+
+    setErrMsg('');
+
+    if (email) {
+
+      // forgotPassword will ask from the server to send the link
+      // to "Restore Password"
+      const result = await forgotPassword({email})
+
+      if (result.status) navigate('/auth/login')
+
+      else setErrMsg(result.message); 
+
+    }
+
+  }
+
   return (
     <div className="mt-8">
       
@@ -19,13 +51,20 @@ const ForgotPassword = () => {
                 <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Forgot Password</h2>
             </div>
 
+            {
+              errMsg && <p className="text-red-600">{errMsg}</p>
+            }
+
   <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
     
-    <form className="space-y-6" action="#" method="POST">
+    <form className="space-y-6" onSubmit={onSubmit}>
       <div>
         <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">Enter your email:</label>
         <div className="mt-2">
-          <input id="email" name="email" type="email" autoComplete="email" required className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+          <input id="email" name="email" type="email" autoComplete="email" 
+          required 
+          className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+          onChange={(e)=>setEmail(e.target.value)} value={email} />
         </div>
       </div>
 

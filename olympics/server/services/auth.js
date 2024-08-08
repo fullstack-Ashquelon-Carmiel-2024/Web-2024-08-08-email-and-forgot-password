@@ -1,6 +1,8 @@
 const User = require('../model/User');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const { getResetToken } = require('./encrypt');
+const { getMailTemplateWithLink, mail } = require('./mail');
 
 module.exports = {
 
@@ -106,6 +108,41 @@ module.exports = {
             req.user = user;
             next();
         })
+    },
+
+    forgotPassword: async function(req,res) {
+        // 1. get email - check that the user exists
+        // 2. create resetToken and put it into DB
+        // 3. create email with link and send
+        let email = req.body.email;
+        
+        const user = await User.findOne({email});
+        // tbd: 
+        // check that the user exists
+
+        let resetToken = getResetToken();
+
+        // tbd: we should store the resetToken in the DB 
+        // -- or add it as a new field to the User schema
+        // -- or create new model ResetToken
+
+        let message = getMailTemplateWithLink('We have recieved your request to reset your password. Please reset your password using the link below',
+        `${process.env.FRONTEND_URL}/auth/reset-password?id=${user.id}&token=${resetToken}`,
+        'Reset Password');
+
+        try {
+            let result = mail(email, 'Reset Olympics Password Link',message);
+            res.json({message: 'Reset password link email has been sent successfully'});
+        } catch(err) {
+            res.status(500).json({message:err.message});
+        }
+
+    },
+
+    resetPassword: async function(req,res) {
+
+
+
     }
 
 }

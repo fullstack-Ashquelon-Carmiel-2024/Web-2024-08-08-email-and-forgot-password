@@ -10,6 +10,31 @@ const user = {
     port: process.env.MAIL_SERVER_PORT,
 }
 
+/**
+ * 
+ * To get an App Password for your Gmail account, follow these detailed steps:
+
+Note: You’ll need to have two-step verification enabled on your Gmail account before generating an App Password. If you haven’t enabled it, do so first by going to your Google Account settings.
+
+Access Your Google Account:
+Start by visiting the Google Account management page. You can do this by navigating to https://myaccount.google.com/.
+Sign In: Sign in to the Google Account associated with the Gmail address you want to use for sending emails programmatically.
+Security: In the left sidebar, click on “Security.”
+Scroll down to How you sign in to google and click on 2-step verificaiton.
+App Passwords: Scroll down to “App passwords.” Click on “App passwords.” You may be prompted to re-enter your password for security purposes.
+App name: Enter a custom name for this App Password. It helps you identify it later, so choose something related to the application or use case where you plan to use this App Password.
+Create: Click the “Create” button. Google will create a unique 16-character App Password for your custom application/device.} email 
+ *  
+ */
+/**
+ * 
+ * If needed additional email validation - use special email validation service,
+ * like https://elasticemail.com/
+ */
+/* We can use panda.knowledger.guru emails,
+  so the host will be panda.knowledger.guru and the port 465 */
+/* Also we could organize for ourselves some email from email server */
+
 const mail = async (email, subject, message) => {
     console.log('Mailing...............');
 
