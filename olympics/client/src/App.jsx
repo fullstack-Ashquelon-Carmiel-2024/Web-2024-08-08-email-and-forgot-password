@@ -1,20 +1,35 @@
-import { useState } from 'react';
+import { useContext, useEffect } from 'react';
 import {Routes, Route} from 'react-router-dom';
-import Login from './components/Login';
+
+import { userContext } from './context/userContext';
+
+import Home from './pages/Home';
 import ForgotPassword from './components/ForgotPassword';
+import Login from './components/Login';
+import SideBar from './components/sidebar/SideBar';
 
-import { NotLoggedRoutes } from './routes/logged-not-logged';
-
-//import { Button as ShadcnButton } from './components/ui/button';
+import { LoggedRoutes, NotLoggedRoutes } from './routes/logged-not-logged';
 
 function App() {
-  const [user, setUser] = useState({role:'guest'})
+
+  const { user, dispatchUser } = useContext(userContext);
+
+  useEffect(() => {
+
+    dispatchUser({type:'CHECK_STORAGE_FOR_USER'});
+
+  },[])
 
   return (
-    <>
-      <h1 className='text-center text-white py-5 text-3xl font-bold underline my-6 bg-indigo-600' >
-        Login - Forgot Password?
-      </h1>
+    <div className={user.role==='guest'?`container`:
+    `sm:flex`}>
+      {
+        user.role === 'guest' ?
+        <h1 className='text-center text-white py-5 text-3xl font-bold underline my-6 bg-indigo-600' >
+          Login - Forgot Password?
+        </h1>:
+        <SideBar />
+      }
       <Routes>
 
         <Route element={ <NotLoggedRoutes role={user.role} /> }>
@@ -27,11 +42,18 @@ function App() {
 
           </Route>
         </Route>
+
+        <Route element={ <LoggedRoutes role={user.role} /> }>
+          
+          <Route path="/" >
+
+            <Route index element={ <Home user={user} /> } />
+            
+          </Route>
+        </Route>
       </Routes>
-      {/* <div>
-        <ShadcnButton>Click Me</ShadcnButton>
-      </div> */}
-    </>
+      
+    </div>
   )
 }
 

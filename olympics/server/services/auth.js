@@ -42,7 +42,10 @@ module.exports = {
 
             let email = req.body.email;
             let password = req.body.password;
-            let user = await User.findOne({email});
+            
+            // populate the field "role" only with the field "userType" 
+            //      from the appropriate "role" document
+            let user = await User.findOne({email}).populate('role','userType').exec();
             
             if (!user) {
                 return res.status(401).json({err: `Email ${email} not found`})
@@ -63,7 +66,9 @@ module.exports = {
                 {refreshToken},{ new:true })
                 // new:true - return the user 
 
-            res.status(201).json({auth:true,accessToken,refreshToken,msg: 'Congratulations! You\'ve logged in!'});
+            // 900000 - 15min,9000000 - 2.5hours
+            res.cookie('olympics', refreshToken, { maxAge: 9000000})
+            res.status(201).json({auth:true,accessToken,msg: 'Congratulations! You\'ve logged in!'});
 
         } catch(err) {
 
@@ -143,6 +148,33 @@ module.exports = {
 
 
 
-    }
+    },
+
+    logout: async function(req, res) {
+ 
+        const refreshToken = req.body.token;
+
+        // send err if there is no token or it is invalid
+        if (!refreshToken) {
+            
+            res.json({auth: false, message: `LOGGED OUT`});
+        
+        } else {
+
+            let tokenId = await tokens.getIdByToken(refreshToken);
+            if (tokenId === 'ERR' || tokenId === 'NOT FOUND') {
+
+                return res.json({auth: false, message: `LOGGED OUT`});    
+
+            }
+
+            tokens.deleteToken(tokenId);
+
+            res.json({auth: false, message: `LOGGED OUT`});
+
+        }
+
+        // if everything is OK create access or refresh token and send it to user
+    },
 
 }

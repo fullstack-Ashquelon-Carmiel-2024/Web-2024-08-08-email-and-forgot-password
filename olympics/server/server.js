@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 require('dotenv').config();
 require('./db/db');
 
@@ -15,6 +16,14 @@ const PORT = process.env.PORT || 3555;
 
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
+
+app.use(
+    cors({
+    origin: ['http://localhost:5173','http://localhost:3003','https://class.leonardoschool.co.il','https://www.class.leonardoschool.co.il'],
+    methods: ['GET', 'POST','GET'],
+    credentials: true,
+    })
+ );
 
 /******** ROUTES **********/
 

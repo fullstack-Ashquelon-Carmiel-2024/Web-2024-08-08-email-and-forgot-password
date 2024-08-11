@@ -21,6 +21,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["**/*.js", "**/*.tsx","**/*.ts", "**/*.tsx"],
+  "include": ["**/*.js", "**/*.tsx","**/*.ts", "**/*.tsx", "src/context/userContext.jsx"],
   "exclude": ["node_modules"]
 }

@@ -1,7 +1,49 @@
-import {Link} from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useState, useContext } from 'react';
+import { login } from '../services/auth';
+import { userContext } from '../context/userContext';
 
 
 const Login = () => {
+
+  const { dispatchUser } = useContext(userContext);
+
+  const navigate = useNavigate();
+
+  const [ formData, setFormData ] = useState({email:'',password:''});
+  const [ errMsg, setErrMsg ] = useState('');
+
+  const onChange = (e) => {
+
+    setFormData({...formData, [e.target.name]:e.target.value});
+
+  }
+
+  const onSubmit = async (e) => {
+
+    e.preventDefault();
+    setErrMsg('');
+
+    if (Object.values(formData).every(v => v)) {
+
+      const result = await login(formData,dispatchUser);
+
+      console.log('IN LOGIN')
+      if (result.status) {
+
+        setFormData({email:'',password:''});
+        navigate('/');
+
+      } else {
+
+        setErrMsg(result.message);
+
+      }
+
+    }
+
+  }
+
   return (
     <div className="mt-8">
       
@@ -18,13 +60,21 @@ const Login = () => {
             <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Sign in to your account</h2>
         </div>
 
+        {
+          <p className={`text-red-600 text-sm italic ${errMsg ? "opacity-100" : "opacity-0"}`}>
+            {errMsg}
+          </p>
+        }
+
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
     
-          <form className="space-y-6" action="#" method="POST">
+          <form className="space-y-6" onSubmit={onSubmit} >
             <div>
               <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">Email address</label>
               <div className="mt-2">
-                <input id="email" name="email" type="email" autoComplete="email" required className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+                <input id="email" name="email" type="email" autoComplete="email" required 
+                       className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                       onChange={onChange} value={formData.email} />
               </div>
             </div>
 
@@ -36,7 +86,9 @@ const Login = () => {
                 </div>
               </div>
               <div className="mt-2">
-                <input id="password" name="password" type="password" autoComplete="current-password" required className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+                <input id="password" name="password" type="password" autoComplete="current-password" required 
+                className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                onChange={onChange} value={formData.password} />
               </div>
             </div>
 
